@@ -15,6 +15,6 @@ app.use(Antd);
 app.use(router);
 
 const userStore = useUserStore();
-await userStore.getUser();
+userStore.getUser();
 
 app.mount('#app');
