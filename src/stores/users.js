@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { message } from 'ant-design-vue'
-import { useRouter } from 'vue-router'
+import router from '../router';
 
 export const useUserStore = defineStore('users', () =>
 {
@@ -10,7 +10,6 @@ export const useUserStore = defineStore('users', () =>
     const token = ref(null);
     const errorMessage = ref('');
     const loading = ref(false);
-    const router = useRouter();
 
     const validateEmail = (email) =>
     {
@@ -50,6 +49,7 @@ export const useUserStore = defineStore('users', () =>
                 {
                     email: userInfo.data.email,
                     role: userInfo.data.role,
+                    user_id: userInfo.data.user_id,
                     status: 'Đăng nhập'
                 }
 
@@ -58,7 +58,7 @@ export const useUserStore = defineStore('users', () =>
                 loading.value = false;
                 errorMessage.value = '';
             })
-            .catch((error) =>
+            .catch(() =>
             {
                 loading.value = false;
                 return errorMessage.value = "Thông tin đăng nhập không đúng!";
@@ -70,6 +70,7 @@ export const useUserStore = defineStore('users', () =>
         user.value = null;
         token.value = '';
         localStorage.removeItem('token');
+        router.push('/');
     }
 
     const clearErrorMessage = () =>
@@ -101,28 +102,25 @@ export const useUserStore = defineStore('users', () =>
         errorMessage.value = '';
 
         // Thêm người dùng vào database
-        try
-        {
-            const response = await axios.post('auth/register',
-                {
-                    username: username,
-                    email: email,
-                    password: password
-                });
+        const response = await axios.post('auth/register', {
+            username: username,
+            email: email,
+            password: password
+        });
 
-            user.value =
-            {
-                data: response.data,
-                status: 'Đăng ký'
-            }
-
-            loading.value = false;
-        }
-        catch (e)
+        if (response.status != 200)
         {
             loading.value = false;
-            return errorMessage.value = e.response.data.detail;
+            return errorMessage.value = 'Email đã tồn tại!';
         }
+
+        user.value =
+        {
+            data: response.data,
+            status: 'Đăng ký'
+        }
+
+        loading.value = false;
     }
 
     const getUser = async () =>
@@ -142,13 +140,13 @@ export const useUserStore = defineStore('users', () =>
                     3,
                 );
                 await handleLogout();
-                router.push('/');
             });
 
             user.value =
             {
                 email: userInfo.data.email,
-                role: userInfo.data.role
+                role: userInfo.data.role,
+                user_id: userInfo.data.user_id
             }
         }
     }

@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, ref, onMounted, onUnmounted } from 'vue';
 import { Card } from 'ant-design-vue';
+import { useRouter } from 'vue-router';
 import { useUserStore } from '../stores/users';
 import { storeToRefs } from 'pinia';
 
@@ -9,6 +10,7 @@ const props = defineProps(['test']);
 const test = props.test;
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+const router = useRouter();
 
 const countdown = ref(0);
 let intervalId;
@@ -31,8 +33,10 @@ const calculateCountdown = (date, time) =>
     countdown.value = hours * 3600 + minutes * 60 + seconds;
 };
 
-onMounted(() =>
+onUnmounted(() =>
 {
+    clearInterval(intervalId);
+
     calculateCountdown(test.start_date, test.start_time);
 
     intervalId = setInterval(() =>
@@ -41,10 +45,10 @@ onMounted(() =>
     }, 1000);
 });
 
-onUnmounted(() =>
+const viewTestDetail = (testID) =>
 {
-    clearInterval(intervalId);
-});
+    router.push(`/test/detail/${testID}`);
+}
 
 const formatTime = (time) =>
 {
@@ -72,7 +76,8 @@ const formatTime = (time) =>
             </div>
 
             <div class="buttons">
-                <a-button :disabled="countdown > 0 && user.role != 'Admin'" type="primary" style="margin-right: 10px;">Làm bài</a-button>
+                <a-button v-if="user.role == 'User'" @click="viewTestDetail(test.test_id)" :disabled="countdown > 0" type="primary" style="margin-bottom: 7px; width: 100px;">Làm bài</a-button>
+                <a-button v-else type="primary" @click="viewTestDetail(test.test_id)" style="margin-bottom: 7px; width: 100px;">Xem</a-button>
             </div>
         </div>
     </Card>
@@ -99,5 +104,13 @@ const formatTime = (time) =>
     color: rgb(255, 255, 255);
     cursor: not-allowed;
     box-shadow: none;
+}
+
+.buttons
+{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 </style>

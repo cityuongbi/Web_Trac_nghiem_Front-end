@@ -31,7 +31,7 @@ onMounted(() =>
 <template>
     <a-card hoverable :style="{ width: '260px' }" class="card" @click="navigateToTests(topic.topic_id)">
         <template class="cover_img" #cover>
-            <img alt="Subject" src="../image/cover_subj.png" />
+            <img alt="Subject" :src="`http://localhost:9000${topic.topic_image}`" />
         </template>
         <h3 style="text-align: center; font-weight: bold; word-wrap: break-word;">{{ topic.topic_name }}</h3>
         <a-card-meta style="text-align: center;" :description="`Số lượng bài test: ${topic.num_of_test}`" />

@@ -133,7 +133,7 @@ const cancelHandle = () =>
 
 onMounted(async () =>
 {
-    await axios.get('http://127.0.0.1:8000/test/' + props.id)
+    await axios.get('test/detail/' + props.id)
         .then((response) =>
         {
             data.test = response.data;

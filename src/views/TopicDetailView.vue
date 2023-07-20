@@ -59,7 +59,7 @@ const indicator = h(LoadingOutlined,
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Quicksand:wght@500&family=Zeyada&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap');
 
 .tests-container
 {
@@ -75,7 +75,7 @@ const indicator = h(LoadingOutlined,
 {
     text-align: center;
     margin-top: 20px;
-    font-family: 'Caprasimo', cursive;
+    font-family: 'Quicksand', sans-serif;
     font-size: 125%;
 }
 

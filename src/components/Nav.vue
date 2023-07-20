@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '../stores/users';
 import AuthModal from './AuthModal.vue';
 import { message } from 'ant-design-vue';
-import { UnorderedListOutlined } from '@ant-design/icons-vue';
+import { UnorderedListOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { storeToRefs } from 'pinia';
 
 const router = useRouter();
@@ -47,6 +47,21 @@ const logout = async () =>
     message.success('Đăng xuất thành công!', 3);
     router.push(`/`);
 }
+
+const manageQuestionView = () =>
+{
+    router.push(`/manage_question`);
+}
+
+const manageTestView = () =>
+{
+    router.push(`/manage_test`);
+}
+
+const manageTopicView = () =>
+{
+    router.push(`/manage_topic`);
+}
 </script>
 
 
@@ -68,6 +83,28 @@ const logout = async () =>
                         </div>
 
                         <div class="menu-buttons" v-else>
+                            <a-dropdown :trigger="['click']" placement="bottom" v-if="user.role == 'Admin'">
+                                <template #overlay class="center-content">
+                                    <a-menu>
+                                        <a-menu-item key="1">
+                                            <a-button @click="manageTopicView" type="primary" style="width: 150px;">Quản lý topic</a-button>
+                                        </a-menu-item>
+
+                                        <a-menu-item key="2">
+                                            <a-button @click="manageTestView" type="primary" style="width: 150px;">Quản lý bài test</a-button>
+                                        </a-menu-item>
+
+                                        <a-menu-item key="3">
+                                            <a-button @click="manageQuestionView" type="primary" style="width: 150px;">Quản lý câu hỏi </a-button>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                                <a-button style="margin-right: 10px;" type="primary" @click="toggleMenu">
+                                    Chức năng
+                                    <DownOutlined />
+                                </a-button>
+                            </a-dropdown>
+
                             <a-button type="primary" @click.prevent="logout">
                                 <LogoutOutlined />
                                 Đăng xuất
@@ -76,26 +113,57 @@ const logout = async () =>
                     </template>
                     <template v-else>
                         <a-dropdown :trigger="['click']">
-                            <template #overlay>
-                                <a-menu v-if="isMenuOpen">
-                                    <div v-if="!user">
+                            <template #overlay style="width: 100%;">
+                                <div v-if="!user">
+                                    <a-menu class="center-content">
                                         <a-menu-item key="1">
                                             <AuthModal :isLogin="false" />
                                         </a-menu-item>
                                         <a-menu-item key="2">
                                             <AuthModal :isLogin="true" />
                                         </a-menu-item>
-                                    </div>
+                                    </a-menu>
+                                </div>
 
-                                    <div v-else>
-                                        <a-menu-item key="1">
-                                            <a-button type="primary" @click.prevent="logout">
+                                <div v-else>
+                                    <a-menu class="center-content">
+                                        <a-menu-item key="1" style="width: 100%;" v-if="user.role == 'Admin'">
+                                            <a-dropdown :trigger="['click']" placement="bottom">
+                                                <template #overlay>
+                                                    <a-menu class="center-content">
+                                                        <a-menu-item key="1">
+                                                            <a-button @click="manageTopicView" type="primary" style="width: 150px;">Quản lý
+                                                                topic</a-button>
+                                                        </a-menu-item>
+
+                                                        <a-menu-item key="2">
+                                                            <a-button @click="manageTestView" type="primary" style="width: 150px;">Quản lý bài
+                                                                test</a-button>
+                                                        </a-menu-item>
+
+                                                        <a-menu-item key="3">
+                                                            <a-button @click="manageQuestionView" type="primary" style="width: 150px;">Quản lý câu hỏi
+                                                            </a-button>
+                                                        </a-menu-item>
+                                                    </a-menu>
+                                                </template>
+
+                                                <a-button style="margin-right: 10px; width: 120px;" type="primary"
+                                                    @click="toggleMenu">
+                                                    Chức năng
+                                                    <DownOutlined />
+                                                </a-button>
+                                            </a-dropdown>
+                                        </a-menu-item>
+
+                                        <a-menu-item key="2" style="width: 100%;">
+                                            <a-button style="width: 120px;" type="primary" @click.prevent="logout">
                                                 <LogoutOutlined />
                                                 Đăng xuất
                                             </a-button>
                                         </a-menu-item>
-                                    </div>
-                                </a-menu>
+                                    </a-menu>
+                                </div>
                             </template>
                             <a-button type="primary" @click="toggleMenu">
                                 <UnorderedListOutlined />
@@ -121,6 +189,14 @@ const logout = async () =>
 {
     display: flex;
     align-items: center;
+}
+
+.center-content
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .left-content a
